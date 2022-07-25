@@ -1,8 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { isAuthenticated, signOut } from '../../api/userAPI'
 import './navbar.css'
 
 const Navbar = () => {
+    const { user } = isAuthenticated()
+    const navigate = useNavigate()
+
+
+    const signout = (e) => {
+        e.preventDefault()
+        signOut(navigate('/'))
+    }
     return (
         <>
             <div className='container-fluid'>
@@ -17,9 +26,30 @@ const Navbar = () => {
                         </form>
                     </div>
                     <div className='col-md-3 d-flex justify-content-evenly pt-1'>
-                        <Link to='/signin'><i className="bi bi-box-arrow-in-left text-white fs-3"></i></Link>
-                        <Link to="/register"><i className="bi bi-person-plus text-white fs-3"></i></Link>
-                        <Link to="/cart"><i className="bi bi-cart text-white fs-3"></i></Link>
+                        {!user &&
+                            <>
+                                <Link to='/signin'><i className="bi bi-box-arrow-in-left text-white fs-3"></i></Link>
+                                <Link to="/register"><i className="bi bi-person-plus text-white fs-3"></i></Link>
+                            </>
+                        }
+                        {user && user.role === 0 &&
+                            <>
+
+                                <Link to="/user/profile"><i className="bi bi-person-circle text-white fs-3"></i></Link>
+                                <Link to="/cart"><i className="bi bi-cart text-white fs-3"></i></Link>
+                            </>
+                        }
+                        {
+                            user && user.role === 1 && 
+                            <Link to="/admin/dashboard"><i className="bi bi-speedometer text-white fs-3"></i></Link>
+
+                        }
+{
+    user &&
+    <Link to="#" onClick={signout}><i className="bi bi-box-arrow-right text-white fs-3"></i></Link>
+
+}
+
                     </div>
                 </div>
             </div>
